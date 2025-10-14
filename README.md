@@ -1,35 +1,38 @@
 # OCT Denoising and Layer Segmentation using Noise2Void and U-Net
 
-This repository presents an implementation of a **self-supervised denoising** and **deep-learning-based segmentation** pipeline for **Optical Coherence Tomography (OCT)** B-scans.  
-The objective is to improve OCT image quality and delineate structural boundaries using a hybrid workflow combining **Noise2Void** (for denoising) and **U-Net** (for segmentation).
+This repository presents an implementation of a self-supervised denoising and deep-learning-based segmentation pipeline for **Optical Coherence Tomography (OCT)** B-scans.
+The goal is to improve OCT image quality and delineate structural tissue boundaries using a hybrid approach that combines **Noise2Void** (denoising) and **U-Net** (segmentation).
 
 ---
 
-## Overview
+## Repository Overview
 
 oct-denoise-unet/
-│
+|
 ├── examples/ # Example input/output visuals
-│ ├── input_oct.png # Raw noisy OCT image
-│ ├── denoised_oct.png # Output from Noise2Void
-│ ├── segmentation_mask.png # U-Net segmentation result
-│ ├── MyMasks.gif # Segmentation animation
-│ └── Reslice of MyMasks.gif
-│
+| ├── input_oct.png # Raw noisy OCT image
+| ├── denoised_oct.png # Output from Noise2Void
+| ├── segmentation_mask.png # U-Net segmentation result
+| ├── MyMasks.gif # Segmentation animation (optional)
+| └── Reslice of MyMasks.gif # Alternative view (optional)
+|
 ├── ImageDenoising/ # Noise2Void implementation
-│ ├── n2v_simple_main.py
-│ ├── n2v_simple_training.py
-│ ├── n2v_simple_pred.py
-│ └── n2v_simple_models.py
-│
+| ├── n2v_simple_main.py
+| ├── n2v_simple_training.py
+| ├── n2v_simple_pred.py
+| └── n2v_simple_models.py
+|
 ├── ImageSegmentation/ # U-Net implementation
-│ ├── UnetModel.py
-│ ├── preprocessing.py
-│ └── train.py
-│
+| ├── UnetModel.py
+| ├── preprocessing.py
+| └── train.py
+|
 ├── requirements.txt
 ├── LICENSE
 └── README.md
+
+yaml
+코드 복사
 
 ---
 
@@ -40,62 +43,62 @@ oct-denoise-unet/
 | ![](examples/input_oct.png) | ![](examples/denoised_oct.png) | ![](examples/segmentation_mask.png) |
 
 **Figure:** Representative denoising and segmentation outputs.  
-Left: Original OCT B-scan with speckle noise.  
-Middle: Noise2Void denoised reconstruction.  
-Right: U-Net segmentation highlighting major tissue boundaries.
+Left → Original OCT B-scan with speckle noise.  
+Middle → Noise2Void denoised reconstruction.  
+Right → U-Net segmentation highlighting major tissue boundaries.
 
 ---
 
 ## Getting Started
 
 ### Installation
-
 ```bash
 git clone https://github.com/ajung23/oct-denoise-unet.git
 cd oct-denoise-unet
 pip install -r requirements.txt
-
-# Denoising (Noise2Void)
+Run Noise2Void Denoising
+bash
+코드 복사
 cd ImageDenoising
 python n2v_simple_main.py
-
-# Segmentation (U-Net)
+Run U-Net Segmentation
+bash
+코드 복사
 cd ImageSegmentation
 python train.py
+Methodology
+Component	Framework	Description
+Noise2Void	TensorFlow / Keras	Self-supervised denoising trained on noisy images only
+U-Net	PyTorch	Encoder–decoder CNN for layer/tissue segmentation
+Dataset	OCT B-scans	Example input: XZ_area-Stack.tiff
+Metrics	PSNR, SSIM	Image quality & structural similarity
 
+This pipeline enables end-to-end OCT enhancement without clean ground-truth, demonstrating the synergy of self-supervised denoising and supervised segmentation.
 
-# Methodology
-| Component      | Framework          | Description                                                |
-| -------------- | ------------------ | ---------------------------------------------------------- |
-| **Noise2Void** | TensorFlow / Keras | Self-supervised denoising trained directly on noisy images |
-| **U-Net**      | PyTorch            | Encoder-decoder architecture for layer segmentation        |
-| **Dataset**    | OCT B-scans        | Input: `XZ_area-Stack.tiff`                                |
-| **Evaluation** | PSNR, SSIM         | Quantitative image quality assessment                      |
+Research Context
+This work stems from the Boston University Tian Lab (Computational Imaging Systems Lab).
 
-# Research Context
+Contributions:
 
-This work explores the intersection of self-supervised denoising and supervised segmentation within medical imaging pipelines.
-It is particularly relevant to:
+Built ground-truth datasets by annotating OCT lung scans (ImageJ + AnnotatorJ).
 
-Researchers studying speckle noise reduction in OCT or ultrasound imaging
+Implemented and tuned Noise2Void to suppress speckle noise and boost SNR.
 
-Labs focused on retinal or dermatologic layer analysis
+Designed and fine-tuned a hybrid CNN (U-Net + Dense blocks) for stronger segmentation.
 
-Developers seeking reproducible hybrid TensorFlow–PyTorch workflows
+Established a reproducible workflow: preprocessing → denoising → segmentation.
 
-# Citation
+Citation
+bibtex
+코드 복사
 @misc{jung2025octdenoiseunet,
   author       = {Euijin Jung},
   title        = {OCT Denoising and Layer Segmentation using Noise2Void and U-Net},
   year         = {2025},
   howpublished = {\url{https://github.com/ajung23/oct-denoise-unet}}
 }
-
-# Contact
-
+Contact
 Euijin Jung
 Email: ajung23@bu.edu
-
-LinkedIn: linkedin.com/in/euijin-jung-5378b6203
-
-Locations: Boston, MA / Chicago, IL
+LinkedIn: https://www.linkedin.com/in/euijin-jung
+Locations: Orlando, FL / Chicago, IL
