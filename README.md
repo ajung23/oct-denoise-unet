@@ -1,53 +1,101 @@
-# OCT Denoising + Segmentation (Noise2Void + U-Net)
+# OCT Denoising and Layer Segmentation using Noise2Void and U-Net
 
-Self-supervised **Noise2Void** denoising and **U-Net** segmentation for OCT images.
-
----
-
-## 📦 Structure
-```
-examples/               # demo .npy/.tif files  
-ImageDenoising/         # Noise2Void scripts  
-ImageSegmentation/      # U-Net scripts  
-```
+This repository presents an implementation of a **self-supervised denoising** and **deep-learning-based segmentation** pipeline for **Optical Coherence Tomography (OCT)** B-scans.  
+The objective is to improve OCT image quality and delineate structural boundaries using a hybrid workflow combining **Noise2Void** (for denoising) and **U-Net** (for segmentation).
 
 ---
 
-## Quick Guide 
-```bash
-python -m venv .venv
-source .venv/bin/activate      # Windows: .venv\Scripts\activate
-pip install -r requirements.txt
+## Overview
 
-# Noise2Void
-cd ImageDenoising
-python n2v_simple_main.py
-
-# U-Net
-cd ../ImageSegmentation
-python preprocessing.py
-python train.py
-```
+oct-denoise-unet/
+│
+├── examples/ # Example input/output visuals
+│ ├── input_oct.png # Raw noisy OCT image
+│ ├── denoised_oct.png # Output from Noise2Void
+│ ├── segmentation_mask.png # U-Net segmentation result
+│ ├── MyMasks.gif # Segmentation animation
+│ └── Reslice of MyMasks.gif
+│
+├── ImageDenoising/ # Noise2Void implementation
+│ ├── n2v_simple_main.py
+│ ├── n2v_simple_training.py
+│ ├── n2v_simple_pred.py
+│ └── n2v_simple_models.py
+│
+├── ImageSegmentation/ # U-Net implementation
+│ ├── UnetModel.py
+│ ├── preprocessing.py
+│ └── train.py
+│
+├── requirements.txt
+├── LICENSE
+└── README.md
 
 ---
 
-## 📊 Example Results
+## Example Results
 
 | Input (Raw OCT) | Denoised (Noise2Void) | Segmented (U-Net) |
 |:--:|:--:|:--:|
 | ![](examples/input_oct.png) | ![](examples/denoised_oct.png) | ![](examples/segmentation_mask.png) |
 
-
-## 📁 Full Dataset Access
-Due to size and data policy, the complete OCT dataset used for training is not included.
-Small demo files are provided in `examples/` for reproducibility.
-The full dataset can be shared upon request or accessed through the BU Tian Lab OCT collection.
+**Figure:** Representative denoising and segmentation outputs.  
+Left: Original OCT B-scan with speckle noise.  
+Middle: Noise2Void denoised reconstruction.  
+Right: U-Net segmentation highlighting major tissue boundaries.
 
 ---
 
-## 🧠 Methods
-- **Noise2Void** — blind-spot, self-supervised denoising.
-- **U-Net** — encoder–decoder segmentation.
+## Getting Started
 
-Author: **Euijin Jung (EJ)**  
-License: **MIT**
+### Installation
+
+```bash
+git clone https://github.com/ajung23/oct-denoise-unet.git
+cd oct-denoise-unet
+pip install -r requirements.txt
+
+# Denoising (Noise2Void)
+cd ImageDenoising
+python n2v_simple_main.py
+
+# Segmentation (U-Net)
+cd ImageSegmentation
+python train.py
+
+
+# Methodology
+| Component      | Framework          | Description                                                |
+| -------------- | ------------------ | ---------------------------------------------------------- |
+| **Noise2Void** | TensorFlow / Keras | Self-supervised denoising trained directly on noisy images |
+| **U-Net**      | PyTorch            | Encoder-decoder architecture for layer segmentation        |
+| **Dataset**    | OCT B-scans        | Input: `XZ_area-Stack.tiff`                                |
+| **Evaluation** | PSNR, SSIM         | Quantitative image quality assessment                      |
+
+# Research Context
+
+This work explores the intersection of self-supervised denoising and supervised segmentation within medical imaging pipelines.
+It is particularly relevant to:
+
+Researchers studying speckle noise reduction in OCT or ultrasound imaging
+
+Labs focused on retinal or dermatologic layer analysis
+
+Developers seeking reproducible hybrid TensorFlow–PyTorch workflows
+
+# Citation
+@misc{jung2025octdenoiseunet,
+  author       = {Euijin Jung},
+  title        = {OCT Denoising and Layer Segmentation using Noise2Void and U-Net},
+  year         = {2025},
+  howpublished = {\url{https://github.com/ajung23/oct-denoise-unet}}
+}
+
+# Contact
+
+Euijin Jung
+Email: ajung23@bu.edu
+
+LinkedIn: linkedin.com/in/euijin-jung-5378b6203
+
+Locations: Boston, MA / Chicago, IL
