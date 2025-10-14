@@ -29,19 +29,30 @@ oct-denoise-unet/
 ├── requirements.txt
 ├── LICENSE
 └── README.md
+```
 
 ---
 
 ## Example Results
 
-| Input (Raw OCT) | Denoised (Noise2Void) | Segmented (U-Net) |
-|:--:|:--:|:--:|
-| ![](examples/input_oct.png) | ![](examples/denoised_oct.png) | ![](examples/segmentation_mask.png) |
+<table>
+  <thead>
+    <tr>
+      <th align="center">Input (Raw OCT)</th>
+      <th align="center">Denoised (Noise2Void)</th>
+      <th align="center">Segmented (U-Net)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td align="center"><img src="examples/input_oct.png" alt="input" width="260"></td>
+      <td align="center"><img src="examples/denoised_oct.png" alt="denoised" width="260"></td>
+      <td align="center"><img src="examples/segmentation_mask.png" alt="segmented" width="260"></td>
+    </tr>
+  </tbody>
+</table>
 
-**Figure:** Representative denoising and segmentation outputs.  
-Left → Original OCT B-scan with speckle noise.  
-Middle → Noise2Void denoised reconstruction.  
-Right → U-Net segmentation highlighting major tissue boundaries.
+**Figure.** Left: original OCT B-scan with speckle noise. Middle: Noise2Void denoised reconstruction. Right: U-Net segmentation highlighting layer boundaries.
 
 ---
 
@@ -52,49 +63,56 @@ Right → U-Net segmentation highlighting major tissue boundaries.
 git clone https://github.com/ajung23/oct-denoise-unet.git
 cd oct-denoise-unet
 pip install -r requirements.txt
-Run Noise2Void Denoising
-bash
-코드 복사
+```
+
+### Run Noise2Void (denoising)
+```bash
 cd ImageDenoising
 python n2v_simple_main.py
-Run U-Net Segmentation
-bash
-코드 복사
+```
+
+### Run U-Net (segmentation)
+```bash
 cd ImageSegmentation
 python train.py
-Methodology
-Component	Framework	Description
-Noise2Void	TensorFlow / Keras	Self-supervised denoising trained on noisy images only
-U-Net	PyTorch	Encoder–decoder CNN for layer/tissue segmentation
-Dataset	OCT B-scans	Example input: XZ_area-Stack.tiff
-Metrics	PSNR, SSIM	Image quality & structural similarity
+```
 
-This pipeline enables end-to-end OCT enhancement without clean ground-truth, demonstrating the synergy of self-supervised denoising and supervised segmentation.
+---
 
-Research Context
-This work stems from the Boston University Tian Lab (Computational Imaging Systems Lab).
+## Methodology
 
-Contributions:
+| Component  | Framework           | Description                                       |
+|------------|---------------------|---------------------------------------------------|
+| Noise2Void | TensorFlow / Keras  | Self-supervised denoising on noisy images only    |
+| U-Net      | PyTorch             | Encoder–decoder CNN for layer segmentation        |
+| Dataset    | OCT B-scans         | Example input: `XZ_area-Stack.tiff`               |
+| Metrics    | PSNR, SSIM          | Image quality & structural similarity             |
 
-Built ground-truth datasets by annotating OCT lung scans (ImageJ + AnnotatorJ).
+---
 
-Implemented and tuned Noise2Void to suppress speckle noise and boost SNR.
+## Research Context
 
-Designed and fine-tuned a hybrid CNN (U-Net + Dense blocks) for stronger segmentation.
+Work derived from the **Boston University Tian Lab (Computational Imaging Systems Lab)**:
+- Built ground-truth datasets by annotating OCT lung scans (ImageJ + AnnotatorJ).
+- Implemented and tuned **Noise2Void** to suppress speckle noise and improve SNR.
+- Designed and fine-tuned a hybrid CNN (U-Net + Dense blocks) for better segmentation.
+- Reproducible workflow: preprocessing → denoising → segmentation.
 
-Established a reproducible workflow: preprocessing → denoising → segmentation.
+---
 
-Citation
-bibtex
-코드 복사
+## Citation
+```bibtex
 @misc{jung2025octdenoiseunet,
   author       = {Euijin Jung},
   title        = {OCT Denoising and Layer Segmentation using Noise2Void and U-Net},
   year         = {2025},
   howpublished = {\url{https://github.com/ajung23/oct-denoise-unet}}
 }
-Contact
-Euijin Jung
-Email: ajung23@bu.edu
-LinkedIn: https://www.linkedin.com/in/euijin-jung
+```
+
+## Contact
+Euijin Jung • ajung23@bu.edu • https://www.linkedin.com/in/euijin-jung  
 Locations: Orlando, FL / Chicago, IL
+
+## License
+MIT License © 2025 Euijin Jung
