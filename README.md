@@ -1,38 +1,34 @@
 # OCT Denoising and Layer Segmentation using Noise2Void and U-Net
 
-This repository presents an implementation of a self-supervised denoising and deep-learning-based segmentation pipeline for **Optical Coherence Tomography (OCT)** B-scans.
-The goal is to improve OCT image quality and delineate structural tissue boundaries using a hybrid approach that combines **Noise2Void** (denoising) and **U-Net** (segmentation).
+This repository implements a **self-supervised denoising** and **deep-learning segmentation** pipeline for **Optical Coherence Tomography (OCT)** B-scans, combining **Noise2Void** (denoising) and **U-Net** (segmentation).
 
 ---
 
 ## Repository Overview
 
+```text
 oct-denoise-unet/
-|
-├── examples/ # Example input/output visuals
-| ├── input_oct.png # Raw noisy OCT image
-| ├── denoised_oct.png # Output from Noise2Void
-| ├── segmentation_mask.png # U-Net segmentation result
-| ├── MyMasks.gif # Segmentation animation (optional)
-| └── Reslice of MyMasks.gif # Alternative view (optional)
-|
-├── ImageDenoising/ # Noise2Void implementation
-| ├── n2v_simple_main.py
-| ├── n2v_simple_training.py
-| ├── n2v_simple_pred.py
-| └── n2v_simple_models.py
-|
-├── ImageSegmentation/ # U-Net implementation
-| ├── UnetModel.py
-| ├── preprocessing.py
-| └── train.py
-|
+├── examples/                      # Example input/output visuals
+│   ├── input_oct.png              # Raw noisy OCT image
+│   ├── denoised_oct.png           # Output from Noise2Void
+│   ├── segmentation_mask.png      # U-Net segmentation result
+│   ├── MyMasks.gif                # Segmentation animation (optional)
+│   └── Reslice of MyMasks.gif     # Alternative view (optional)
+│
+├── ImageDenoising/                # Noise2Void implementation
+│   ├── n2v_simple_main.py
+│   ├── n2v_simple_training.py
+│   ├── n2v_simple_pred.py
+│   └── n2v_simple_models.py
+│
+├── ImageSegmentation/             # U-Net implementation
+│   ├── UnetModel.py
+│   ├── preprocessing.py
+│   └── train.py
+│
 ├── requirements.txt
 ├── LICENSE
 └── README.md
-
-yaml
-코드 복사
 
 ---
 
