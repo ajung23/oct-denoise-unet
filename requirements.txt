@@ -1,0 +1,9 @@
+numpy
+scipy
+matplotlib
+scikit-image
+tifffile
+imageio
+tensorflow==2.6.0
+keras
+# torch torchvision   # (uncomment if using PyTorch)
