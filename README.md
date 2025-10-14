@@ -31,13 +31,12 @@ python train.py
 
 ---
 
-## Example Preview
+## 📊 Example Results
 
-| Input | Denoised (N2V) | Segmentation (U-Net) |
-|---|---|---|
-| ![](examples/Stack.png) | ![](examples/denoised.png) | ![](examples/MyMasks.gif) |
+| Input (Raw OCT) | Denoised (Noise2Void) | Segmented (U-Net) |
+|:--:|:--:|:--:|
+| ![](examples/input_oct.png) | ![](examples/denoised_oct.png) | ![](examples/segmentation_mask.png) |
 
----
 
 ## 📁 Full Dataset Access
 Due to size and data policy, the complete OCT dataset used for training is not included.
