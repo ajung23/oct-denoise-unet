@@ -1,0 +1,7 @@
+cff-version: 1.2.0
+title: "OCT Denoising + Segmentation (Noise2Void + U-Net)"
+authors:
+  - family-names: Jung
+    given-names: Euijin
+date-released: 2025-01-01
+url: https://github.com/ajung23/oct-denoise-unet
