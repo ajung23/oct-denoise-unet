@@ -29,7 +29,6 @@ oct-denoise-unet/
 └── README.md
 ```
 
-> **Note:** If you’re reviewing this for **lab placement (e.g., UChicago)** or **hiring**, start with the notebooks; they run on CPU with the synthetic sample.
 
 ---
 
