@@ -1,118 +1,117 @@
-# OCT Denoising and Layer Segmentation using Noise2Void and U-Net
+# OCT Denoising + Segmentation (Noise2Void + U‑Net)
 
-This repository implements a **self-supervised denoising** and **deep-learning segmentation** pipeline for **Optical Coherence Tomography (OCT)** B-scans, combining **Noise2Void** (denoising) and **U-Net** (segmentation).
+> Self‑supervised denoising and layer/region segmentation for OCT B‑scans. Built from work done at **BU Tian Lab (Computational Imaging Systems Lab)**. This repo is structured to be easy for labs to evaluate and for recruiters to scan.
+
+## TL;DR
+- **Denoising:** `Noise2Void` (self‑supervised; no clean ground truth needed)
+- **Segmentation:** `U‑Net` (optionally with Dense blocks)
+- **Reproducibility:** simple scripts + notebooks + fixed env
+- **Data privacy:** no PHI; synthetic examples included
 
 ---
 
-## Repository Overview
-
-```text
+## Repo Layout
+```
 oct-denoise-unet/
-├── examples/                      # Example input/output visuals
-│   ├── input_oct.png              # Raw noisy OCT image
-│   ├── denoised_oct.png           # Output from Noise2Void
-│   ├── segmentation_mask.png      # U-Net segmentation result
-│   ├── MyMasks.gif                # Segmentation animation (optional)
-│   └── Reslice of MyMasks.gif     # Alternative view (optional)
-│
-├── ImageDenoising/                # Noise2Void implementation
-│   ├── n2v_simple_main.py
-│   ├── n2v_simple_training.py
-│   ├── n2v_simple_pred.py
-│   └── n2v_simple_models.py
-│
-├── ImageSegmentation/             # U-Net implementation
-│   ├── UnetModel.py
-│   ├── preprocessing.py
-│   └── train.py
-│
+├── examples/                  # Example input/output visuals (safe, synthetic)
+│   ├── input_oct.png          # Raw noisy OCT-like B-scan (synthetic)
+│   ├── denoised_oct.png       # Noise2Void result (synthetic)
+│   └── segmentation_mask.png  # U‑Net mask example (synthetic)
+├── scripts/
+│   ├── denoise_n2v.py         # Train/predict with Noise2Void
+│   ├── train_unet.py          # Train U‑Net on OCT masks
+│   ├── eval_metrics.py        # PSNR/SSIM utilities
+│   └── make_synthetic_oct.py  # Generate synthetic OCT-like data
+├── notebooks/
+│   ├── 01_n2v_demo.ipynb      # Minimal N2V demo
+│   └── 02_unet_training.ipynb # Minimal U‑Net training template
 ├── requirements.txt
-├── LICENSE
 └── README.md
 ```
 
----
-
-## Example Results
-
-<table>
-  <thead>
-    <tr>
-      <th align="center">Input (Raw OCT)</th>
-      <th align="center">Denoised (Noise2Void)</th>
-      <th align="center">Segmented (U-Net)</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td align="center"><img src="examples/input_oct.png" alt="input" width="260"></td>
-      <td align="center"><img src="examples/denoised_oct.png" alt="denoised" width="260"></td>
-      <td align="center"><img src="examples/segmentation_mask.png" alt="segmented" width="260"></td>
-    </tr>
-  </tbody>
-</table>
-
-**Figure.** Left: original OCT B-scan with speckle noise. Middle: Noise2Void denoised reconstruction. Right: U-Net segmentation highlighting layer boundaries.
+> **Note:** If you’re reviewing this for **lab placement (e.g., UChicago)** or **hiring**, start with the notebooks; they run on CPU with the synthetic sample.
 
 ---
 
-## Getting Started
+## Quickstart
 
-### Installation
 ```bash
-git clone https://github.com/ajung23/oct-denoise-unet.git
-cd oct-denoise-unet
+# 1) Create env
+python -m venv .venv && source .venv/bin/activate  # Windows: .venv\Scripts\activate
+pip install --upgrade pip
 pip install -r requirements.txt
+
+# 2) See the pipeline on synthetic data
+python scripts/make_synthetic_oct.py --out data/synth --n 20
+python scripts/denoise_n2v.py --data data/synth --out runs/n2v_demo
+python scripts/train_unet.py --data data/synth --out runs/unet_demo --epochs 3
+
+# 3) Evaluate
+python scripts/eval_metrics.py --pred runs/unet_demo/preds --gt data/synth/masks
 ```
 
-### Run Noise2Void (denoising)
-```bash
-cd ImageDenoising
-python n2v_simple_main.py
+**Real data:** Place your B‑scans under `data/` following:
 ```
-
-### Run U-Net (segmentation)
-```bash
-cd ImageSegmentation
-python train.py
+data/
+├── raw/           # noisy OCT .png/.tif
+├── denoised/      # N2V outputs
+└── masks/         # ImageJ/AnnotatorJ .png masks (same basename as raw)
 ```
 
 ---
 
-## Methodology
+## Methods (Short)
 
-| Component  | Framework           | Description                                       |
-|------------|---------------------|---------------------------------------------------|
-| Noise2Void | TensorFlow / Keras  | Self-supervised denoising on noisy images only    |
-| U-Net      | PyTorch             | Encoder–decoder CNN for layer segmentation        |
-| Dataset    | OCT B-scans         | Example input: `XZ_area-Stack.tiff`               |
-| Metrics    | PSNR, SSIM          | Image quality & structural similarity             |
+| Component | Library | Why |
+|---|---|---|
+| Noise2Void | `n2v` / `csbdeep` (Keras) | Self‑supervised denoising; no clean ground truth required. |
+| U‑Net (+Dense blocks optional) | PyTorch | Strong baseline for OCT layer/region segmentation. |
 
----
-
-## Research Context
-
-Work derived from the **Boston University Tian Lab (Computational Imaging Systems Lab)**:
-- Built ground-truth datasets by annotating OCT lung scans (ImageJ + AnnotatorJ).
-- Implemented and tuned **Noise2Void** to suppress speckle noise and improve SNR.
-- Designed and fine-tuned a hybrid CNN (U-Net + Dense blocks) for better segmentation.
-- Reproducible workflow: preprocessing → denoising → segmentation.
+**Metrics:** PSNR, SSIM (image quality); Dice/IoU (segmentation).
 
 ---
 
-## Citation
-```bibtex
-@misc{jung2025octdenoiseunet,
-  author       = {Euijin Jung},
-  title        = {OCT Denoising and Layer Segmentation using Noise2Void and U-Net},
-  year         = {2025},
-  howpublished = {\url{https://github.com/ajung23/oct-denoise-unet}}
-}
-```
+## Results (synthetic preview)
+
+<p align="center">
+  <img src="examples/input_oct.png" width="29%">
+  <img src="examples/denoised_oct.png" width="29%">
+  <img src="examples/segmentation_mask.png" width="29%">
+</p>
+
+Left: noisy input. Middle: N2V denoised. Right: sample mask. (Synthetic images—safe to publish.)
+
+---
+
+## Lab‑grade Reproducibility
+- Fixed seeds where practical; scripts save configs and logs to `runs/`.
+- Clear separation: **preprocess → denoise → segment → evaluate**.
+- Works with ImageJ/AnnotatorJ masks (binary/label PNGs).
+
+---
+
+## Background & Notes (from my BU Tian Lab work)
+- Built **ground‑truth datasets** by annotating OCT lung images with **ImageJ/AnnotatorJ**.
+- Tuned **Noise2Void** to reduce speckle noise and improve downstream segmentation.
+- Trained a **U‑Net with Dense‑block variants**; iterated hyperparameters for better prediction.
+- (Appendix idea) For **voltage imaging**: ultra‑high FPS, low SNR, no clean ground truth → combine **Deep Image Prior (DIP)** with **Noise2Void** for self‑supervised denoising.
+
+---
+
+## Ethics & Data
+- No PHI is stored here.
+- Synthetic samples are provided so the pipeline runs anywhere.
+- For real data, ensure IRB/PI approval and proper de‑identification.
+
+---
+
+## How to Read This Repo (for reviewers)
+- **5 minutes:** open `notebooks/01_n2v_demo.ipynb` and run cells.
+- **15 minutes:** run the `scripts/` quickstart on CPU (synthetic data).
+- **30–60 minutes:** point to your own OCT folder + masks and train a U‑Net.
+
+---
 
 ## Contact
-Euijin Jung • ajung23@bu.edu • https://www.linkedin.com/in/euijin-jung  
-Locations: Orlando, FL / Chicago, IL
-
-## License
-MIT License © 2025 Euijin Jung
+**Euijin Jung** · ajung23@bu.edu · (872) 381‑3969 · Chicago, IL  
+Open to **volunteer RA** roles in **AI/medical imaging**; available to start ASAP.

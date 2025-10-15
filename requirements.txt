@@ -1,9 +1,21 @@
-numpy
-scipy
-matplotlib
-scikit-image
-tifffile
-imageio
-tensorflow==2.6.0
-keras
-# torch torchvision   # (uncomment if using PyTorch)
+# Core
+numpy>=1.24
+scipy>=1.11
+matplotlib>=3.7
+scikit-image>=0.22
+opencv-python>=4.9
+tifffile>=2024.2.12
+imageio>=2.34
+tqdm>=4.66
+
+# Noise2Void (Keras / TensorFlow backend)
+n2v>=0.3.3
+csbdeep>=0.7.4
+tensorflow>=2.13; platform_system != "Darwin" or platform_machine != "arm64"
+
+# PyTorch (for U-Net)
+torch>=2.1
+torchvision>=0.16
+
+# Optional
+albumentations>=1.4
