@@ -1,54 +1,42 @@
-# OCT Denoising + Segmentation (Noise2Void + U‑Net)
+# OCT Denoising & Segmentation (Noise2Void + U‑Net)
 
-**At a glance:** Self‑supervised denoising (Noise2Void‑style) and U‑Net segmentation on OCT B‑scans. This repo reflects work I contributed to at BU’s **Tian Lab**—from dataset creation and denoising to model training and evaluation. It is structured for **fast review**: static results below, 1‑click notebooks, and a simple local quickstart.
+Self‑supervised denoising (Noise2Void) and U‑Net segmentation for OCT B‑scans.  
+This repository reflects the workflow I contributed to at BU’s **Tian Lab**: dataset creation with ImageJ/AnnotatorJ → denoising → segmentation → light, reproducible evaluation.
 
 [![N2V Demo (Colab)](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ajung23/oct-denoise-unet/blob/main/notebooks/01_n2v_demo.ipynb)
 [![U‑Net Training (Colab)](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ajung23/oct-denoise-unet/blob/main/notebooks/02_unet_training.ipynb)
 
 ---
 
-## Why this matters for labs & employers
-- **End‑to‑end ownership:** Created ground‑truth datasets (ImageJ/AnnotatorJ), tuned denoising (Noise2Void), trained U‑Net baselines, and organized results for review.
-- **Rigor + practicality:** Reproducible scripts and notebooks, clean repo layout, and quick visual checks that reduce onboarding time for collaborators.
-- **Transferable impact:** Skills translate to medical imaging, quality assurance, data pipelines, and production‑grade ML prototyping.
+## How this work adds value
+- **End‑to‑end ownership:** built ground‑truth datasets (ImageJ/AnnotatorJ), tuned Noise2Void denoising, trained U‑Net baselines, and packaged results for fast review.
+- **Rigor + speed:** clean scripts/notebooks and a small synthetic set so collaborators can verify quickly, then swap in real data.
+- **Transferable impact:** methods and habits (data quality, self‑supervised denoising, segmentation, metrics) carry straight into clinical imaging and applied‑AI prototyping.
 
 ---
 
-## Quick view: results (static previews)
+## Quick view (no need to run anything)
 <p align="center">
   <img src="examples/results_panel.png" width="98%"><br/>
-  <em>Left: noisy OCT‑like B‑scan · Middle: denoised (N2V‑style preview) · Right: example segmentation mask</em>
+  <em>Left: noisy OCT‑like B‑scan · Middle: denoised preview (N2V‑style) · Right: example mask</em>
 </p>
 
-Additional previews:
+More previews:
 - Denoise before/after: `examples/n2v_before.png` → `examples/n2v_after.png`  
 - Mask + overlay: `examples/unet_pred.png`, `examples/unet_overlay.png`
 
-> Full pipeline notebooks are provided for verification, but a reviewer can evaluate the approach from these images alone.
-
 ---
 
-## What’s in this repo
-- **notebooks/** – two minimal, Colab‑ready notebooks (N2V demo, U‑Net training).  
-- **scripts/** – CLI for synthetic data, training, and quick metrics.  
-- **examples/** – static PNGs used above so reviewers can see results immediately.  
-- **Makefile** – convenience targets (`setup`, `synth`, `unet`, `eval`).
+## What’s here
+- **notebooks/** – two minimal demos (Colab‑ready)  
+- **scripts/** – CLI for synthetic data, training, and quick metrics  
+- **examples/** – static PNGs so reviewers can see results immediately  
+- **Makefile** – `make setup | synth | unet | eval`
 
 ### Local quickstart
 ```bash
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 python scripts/make_synthetic_oct.py --out data/synth --n 20
 python scripts/train_unet.py --data data/synth --out runs/unet_demo --epochs 2
 python scripts/eval_metrics.py --pred runs/unet_demo/preds --gt data/synth/masks
-```
-
----
-
-## Project background (BU Tian Lab)
-- Built **ground‑truth datasets** by annotating OCT lung images with **ImageJ/AnnotatorJ**.
-- Improved input quality with **Noise2Void** parameter sweeps to reduce speckle‑like noise.
-- Trained a **U‑Net** (with Dense‑block variants) and iterated hyperparameters for reliability.
-- Organized results, experiment logs, and simple demos to streamline collaboration.
-
-**Contact:** Euijin Jung · ajung23@bu.edu · (872) 381‑3969 · Chicago, IL
