@@ -1,79 +1,54 @@
 # OCT Denoising + Segmentation (Noise2Void + U‑Net)
 
-> Self‑supervised denoising (Noise2Void) + U‑Net segmentation for OCT‑like B‑scans with **fast setup**.  
-> This patch adds **Google Drive dataset integration** and a **real‑data quick check** notebook.
+**At a glance:** Self‑supervised denoising (Noise2Void‑style) and U‑Net segmentation on OCT B‑scans. This repo reflects work I contributed to at BU’s **Tian Lab**—from dataset creation and denoising to model training and evaluation. It is structured for **fast review**: static results below, 1‑click notebooks, and a simple local quickstart.
 
-[![Open N2V Demo in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ajung23/oct-denoise-unet/blob/main/notebooks/01_n2v_demo.ipynb)
-[![Open U‑Net Training in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ajung23/oct-denoise-unet/blob/main/notebooks/02_unet_training.ipynb)
-[![Open Real Data Check in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ajung23/oct-denoise-unet/blob/main/notebooks/03_real_data_quickcheck.ipynb)
+[![N2V Demo (Colab)](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ajung23/oct-denoise-unet/blob/main/notebooks/01_n2v_demo.ipynb)
+[![U‑Net Training (Colab)](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ajung23/oct-denoise-unet/blob/main/notebooks/02_unet_training.ipynb)
 
 ---
 
-## Dataset (Google Drive)
-**Folder (provided by author):** https://drive.google.com/drive/folders/12nhKcPg3eGIwHcSWv2anTuD_23AwpZX4
-
-> Make sure sharing is set to **Anyone with the link – Viewer** (no login required) if you want others to reproduce.  
-> **PHI warning:** Do not upload PHI or identifiable information. Use de‑identified or synthetic data.
-
-### Download via gdown
-```bash
-# 1) Install deps
-python -m venv .venv && source .venv/bin/activate   # Windows: .venv\Scripts\activate
-pip install --upgrade pip
-pip install -r requirements.txt  # includes gdown
-
-# 2) Download the Drive folder into data/drive_raw
-python scripts/download_gdrive.py --folder-id 12nhKcPg3eGIwHcSWv2anTuD_23AwpZX4 --out data/drive_raw
-
-# 3) Organize into standard layout (data/real/raw, data/real/masks)
-python scripts/organize_dataset.py --src data/drive_raw --dst data/real
-
-# 4) Validate
-python scripts/validate_dataset.py --root data/real
-```
-
-**Standard layout expected:**
-```
-data/
-└── real/
-    ├── raw/           # OCT images (.png/.tif)
-    └── masks/         # binary masks from ImageJ/AnnotatorJ (same basenames)
-```
-
-If your masks are in a different format or naming, use the flags in `organize_dataset.py` to map patterns (see usage).
+## Why this matters for labs & employers
+- **End‑to‑end ownership:** Created ground‑truth datasets (ImageJ/AnnotatorJ), tuned denoising (Noise2Void), trained U‑Net baselines, and organized results for review.
+- **Rigor + practicality:** Reproducible scripts and notebooks, clean repo layout, and quick visual checks that reduce onboarding time for collaborators.
+- **Transferable impact:** Skills translate to medical imaging, quality assurance, data pipelines, and production‑grade ML prototyping.
 
 ---
 
-## Quickstart (Synthetic → works anywhere)
+## Quick view: results (static previews)
+<p align="center">
+  <img src="examples/results_panel.png" width="98%"><br/>
+  <em>Left: noisy OCT‑like B‑scan · Middle: denoised (N2V‑style preview) · Right: example segmentation mask</em>
+</p>
+
+Additional previews:
+- Denoise before/after: `examples/n2v_before.png` → `examples/n2v_after.png`  
+- Mask + overlay: `examples/unet_pred.png`, `examples/unet_overlay.png`
+
+> Full pipeline notebooks are provided for verification, but a reviewer can evaluate the approach from these images alone.
+
+---
+
+## What’s in this repo
+- **notebooks/** – two minimal, Colab‑ready notebooks (N2V demo, U‑Net training).  
+- **scripts/** – CLI for synthetic data, training, and quick metrics.  
+- **examples/** – static PNGs used above so reviewers can see results immediately.  
+- **Makefile** – convenience targets (`setup`, `synth`, `unet`, `eval`).
+
+### Local quickstart
 ```bash
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-
 python scripts/make_synthetic_oct.py --out data/synth --n 20
-# (optional) python scripts/denoise_n2v.py --data data/synth/raw --out runs/n2v_demo --epochs 1
 python scripts/train_unet.py --data data/synth --out runs/unet_demo --epochs 2
 python scripts/eval_metrics.py --pred runs/unet_demo/preds --gt data/synth/masks
 ```
 
-### Results (fill these in after running)
-| Stage                     | PSNR (↑) | SSIM (↑) | Dice (↑) |
-|--------------------------|----------|----------|----------|
-| Raw noisy                |          |          |    —     |
-| After N2V (denoised)     |          |          |    —     |
-| U‑Net segmentation       |    —     |    —     |          |
-
 ---
 
-## Repo map (with this patch)
-```
-scripts/
-  download_gdrive.py     # download Google Drive folder with gdown
-  organize_dataset.py    # normalize into data/real/raw & data/real/masks
-  validate_dataset.py    # sanity checks (counts, matched filenames)
-notebooks/
-  03_real_data_quickcheck.ipynb  # visualize pairs from data/real
-DATA.md                  # dataset structure, patterns, PHI safety
-Makefile                 # data-drive, organize, validate targets
-requirements.txt         # adds gdown
-.gitignore               # ensures data/ is ignored
-```
+## Project background (BU Tian Lab)
+- Built **ground‑truth datasets** by annotating OCT lung images with **ImageJ/AnnotatorJ**.
+- Improved input quality with **Noise2Void** parameter sweeps to reduce speckle‑like noise.
+- Trained a **U‑Net** (with Dense‑block variants) and iterated hyperparameters for reliability.
+- Organized results, experiment logs, and simple demos to streamline collaboration.
+
+**Contact:** Euijin Jung · ajung23@bu.edu · (872) 381‑3969 · Chicago, IL
