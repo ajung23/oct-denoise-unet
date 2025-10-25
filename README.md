@@ -21,8 +21,8 @@ This project demonstrates end-to-end ownership of an applied AI problem.
 
 * **1. Data Curation (Ground Truth):** My first step was building the ground-truth dataset. I used **ImageJ** and **AnnotatorJ** to manually annotate and prepare the training data, which is a critical and often overlooked step in medical imaging.
 * **2. Self-Supervised Denoising (Noise2Void):** To handle the speckle noise, I trained and tuned a Noise2Void model. This self-supervised approach is powerful because it can be trained *without* requiring perfectly clean "ground truth" images, which are often impossible to acquire.
-* **3. Segmentation (U-Net):** With a clean, denoised image, I then trained a U-Net baseline to perform the final segmentation, isolating the key retinal layers for analysis.
-* **4. Rigor & Reproducibility:** I packaged the code into clean scripts and notebooks, ensuring my collaborators could verify results quickly and then swap in their own proprietary data.
+* **3. Segmentation (U-Net):** With a clean, denoised image, I then trained a U-Net baseline (see `train_unet.py`) to perform the final segmentation, isolating the key retinal layers for analysis.
+* **4. Rigor & Reproducibility:** I packaged the code into Colab-ready notebooks and a `Makefile`, ensuring my collaborators could verify results quickly and then swap in their own proprietary data.
 
 ---
 
@@ -39,44 +39,42 @@ The quickest way to see the models in action is to use the Colab notebooks, whic
 
 ### Option 2: Local Quickstart
 
-You can also run the entire pipeline locally using the `Makefile` and CLI scripts.
+You can also run the U-Net training script locally.
 
 ```bash
 # 1. Create environment
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt  # Install all dependencies
 
-# 2. Make synthetic data to test the pipeline
-python scripts/make_synthetic_oct.py --out data/synth --n 20
-# or use the Makefile shortcut:
-# make synth
+# 2. (Provide Your Data)
+# This repo does not include the private training data.
+# You must provide your own dataset of (noisy, clean) image pairs.
 
 # 3. Train the U-Net model
-python scripts/train_unet.py --data data/synth --out runs/unet_demo --epochs 2
-# or use the Makefile shortcut:
-# make unet
+# Edit `train_unet.py` to point to your dataset, then run:
+python train_unet.py --data /path/to/your/data --out runs/unet_demo --epochs 10
 
-# 4. Run evaluation
-python scripts/eval_metrics.py --pred runs/unet_demo/preds --gt data/synth/masks
-# or use the Makefile shortcut:
-# make eval
+# or use the Makefile shortcut (after configuring data):
+# make unet
 ```
 
 ---
 
 ### Repo Structure
 
+This layout separates notebooks, examples, and the main training script.
+
 ```
 oct-denoise-unet/
+├─ .github/workflows/   # CI configuration
+├─ examples/             # Static result images for this README
+│   └─ results_panel.png
 ├─ notebooks/
 │ ├─ 01_n2v_demo.ipynb       # Colab demo for Denoising
 │ └─ 02_unet_training.ipynb  # Colab demo for Segmentation
-├─ scripts/
-│ ├─ make_synthetic_oct.py   # Data generation
-│ ├─ train_unet.py           # Main training script
-│ └─ eval_metrics.py         # Evaluation script
-├─ examples/                 # Result images (like the one above)
+├─ .gitignore
+├─ Makefile                # Make commands for setup & training
+├─ README.md
 ├─ requirements.txt
-├─ Makefile                  # Make commands for quick setup
-└─ README.md
+└─ train_unet.py           # Main U-Net training script
 ```
