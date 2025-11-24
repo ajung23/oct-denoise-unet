@@ -1,80 +1,91 @@
 # End-to-End OCT Denoising & Segmentation Pipeline
 
-This repository details the complete workflow I developed at **Boston University's Tian Lab** for processing noisy Optical Coherence Tomography (OCT) B-scans.
-
-The solution is a two-stage pipeline:
-1.  **Denoising:** A self-supervised **Noise2Void (N2V)** model cleans the raw, noisy OCT scans.
-2.  **Segmentation:** A **U-Net** model segments the key structures from the newly cleaned image.
-
-I was responsible for the entire pipeline, from data curation to final model evaluation.
+This repository documents the workflow I built at **Boston University’s Tian Lab** for processing noisy Optical Coherence Tomography (OCT) B-scans.  
+It integrates **self-supervised denoising** and **deep-learning segmentation** into one reproducible, researcher-friendly pipeline.
 
 <p align="center">
-  <img src="examples/results_panel.png" width="98%"><br/>
-  <em><b>Pipeline Visualized:</b> (Left) Raw noisy OCT-like scan → (Middle) Self-supervised denoising (N2V) → (Right) Final segmentation (U-Net)</em>
+  <img src="examples/results_panel.png" width="98%">
+  <br/>
+  <em><b>Pipeline overview:</b> (Left) Noisy OCT B-scan → (Middle) Noise2Void self-supervised denoising → (Right) U-Net segmentation.</em>
 </p>
 
 ---
 
-## My End-to-End Workflow
+## What This Project Demonstrates
 
-This project demonstrates end-to-end ownership of an applied AI problem.
+This work represents full ownership of an applied AI problem in medical imaging—from data collection to model interpretation.
 
-* **1. Data Curation (Ground Truth):** My first step was building the ground-truth dataset. I used **ImageJ** and **AnnotatorJ** to manually annotate and prepare the training data, which is a critical and often overlooked step in medical imaging.
-* **2. Self-Supervised Denoising (Noise2Void):** To handle the speckle noise, I trained and tuned a Noise2Void model. This self-supervised approach is powerful because it can be trained *without* requiring perfectly clean "ground truth" images, which are often impossible to acquire.
-* **3. Segmentation (U-Net):** With a clean, denoised image, I then trained a U-Net baseline (see `train_unet.py`) to perform the final segmentation, isolating the key retinal layers for analysis.
-* **4. Rigor & Reproducibility:** I packaged the code into Colab-ready notebooks and a `Makefile`, ensuring my collaborators could verify results quickly and then swap in their own proprietary data.
+### 1. Data Curation & Annotation
+I created the ground-truth masks using **ImageJ + AnnotatorJ**, handling preprocessing, slice selection, and layer boundary marking.  
+This step ensured the downstream supervised tasks had consistent and reliable dataset structure.
+
+### 2. Self-Supervised Denoising (Noise2Void)
+To address strong speckle noise and sensor artifacts, I trained and tuned a **Noise2Void (N2V)** model.  
+N2V is particularly valuable in medical imaging because it learns directly from raw noisy scans—no clean reference images required.
+
+### 3. Segmentation (U-Net)
+After denoising, I implemented a compact **U-Net** baseline (see `train_unet.py`).  
+The model segments relevant structures from the denoised B-scans, improving clarity and enabling more stable downstream analysis.
+
+### 4. Reproducibility & Handoff
+The repository includes:
+- GPU-ready Colab notebooks  
+- A clean folder structure  
+- A Makefile for quick local execution  
+- Static before/after images for reviewers  
+
+This design allows researchers or collaborators to validate results quickly and substitute their own OCT datasets with minimal friction.
 
 ---
 
-## How to Run This Project
+## Noise2Void Denoising Results
 
-### Option 1: Launch in Colab (Easiest)
+Below is a representative slice from the noisy OCT stack.  
+These images allow readers to inspect improvements **without running the model**.
 
-The quickest way to see the models in action is to use the Colab notebooks, which are ready to run with a GPU.
+### Noisy vs. Denoised (Side-by-Side)
 
-| Notebook | What it shows | Launch |
-|---|---|---|
-| **Denoising Demo** | Self-supervised denoising with Noise2Void | [![N2V Demo (Colab)](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ajung23/oct-denoise-unet/blob/main/notebooks/01_n2v_demo.ipynb) |
-| **Segmentation Demo** | Training a U-Net on the denoised images | [![U‑Net Training (Colab)](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ajung23/oct-denoise-unet/blob/main/notebooks/02_unet_training.ipynb) |
+![Side-by-Side](examples/n2v_side_by_side.png)
 
-### Option 2: Local Quickstart
+### Denoised Slice (Alone)
 
-You can also run the U-Net training script locally.
+![Denoised](examples/n2v_denoised.png)
+
+### Absolute Pixel Difference (Noise Removed)
+
+![Absolute Difference](examples/n2v_abs_difference.png)
+
+---
+
+## How to Run the Pipeline
+
+### Option 1 — Launch in Colab (Recommended)
+
+These notebooks run on free GPUs and contain all required code:
+
+| Notebook | Description | Launch |
+|---------|-------------|--------|
+| **Noise2Void Demo** | Train & apply self-supervised N2V denoising | [![N2V Demo](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ajung23/oct-denoise-unet/blob/main/notebooks/01_n2v_demo.ipynb) |
+| **U-Net Segmentation Demo** | Train U-Net on denoised B-scans | [![U-Net Demo](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/ajung23/oct-denoise-unet/blob/main/notebooks/02_unet_training.ipynb) |
+
+---
+
+### Option 2 — Local Quickstart
 
 ```bash
-# 1. Create environment
+# 1. Environment setup
 python -m venv .venv && source .venv/bin/activate
-pip install -r requirements.txt  # Install all dependencies
+pip install -r requirements.txt
 
-# 2. (Provide Your Data)
-# This repo does not include the private training data.
-# You must provide your own dataset of (noisy, clean) image pairs.
+# 2. Supply your dataset
+# NOTE: Training data is NOT included; add your own noisy/clean
+# (or noisy-only for N2V) OCT images.
 
-# 3. Train the U-Net model
-# Edit `train_unet.py` to point to your dataset, then run:
-python train_unet.py --data /path/to/your/data --out runs/unet_demo --epochs 10
+# 3. Train U-Net
+python train_unet.py \
+    --data /path/to/data \
+    --out runs/unet_demo \
+    --epochs 10
 
-# or use the Makefile shortcut (after configuring data):
-# make unet
-```
-
----
-
-### Repo Structure
-
-This layout separates notebooks, examples, and the main training script.
-
-```
-oct-denoise-unet/
-├─ .github/workflows/   # CI configuration
-├─ examples/             # Static result images for this README
-│   └─ results_panel.png
-├─ notebooks/
-│ ├─ 01_n2v_demo.ipynb       # Colab demo for Denoising
-│ └─ 02_unet_training.ipynb  # Colab demo for Segmentation
-├─ .gitignore
-├─ Makefile                # Make commands for setup & training
-├─ README.md
-├─ requirements.txt
-└─ train_unet.py           # Main U-Net training script
-```
+# Or using Makefile:
+make unet
